@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>AISO</title>
+
+  <style>
+    body {
+      background-color: #212121;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    .logo {
+      display: block;
+      margin: 20px auto;
+      width: 150px;
+    }
+
+    textarea {
+      width: 90%;
+      max-width: 500px;
+      height: 90px;
+      background-color: #2a2a2a;
+      color: white;
+      border: 1px solid #555;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 16px;
+      resize: none;
+      margin-top: 15px;
+    }
+
+    button {
+      background-color: rgb(241, 132, 7);
+      padding: 12px 24px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      border-radius: 10px;
+      margin-top: 15px;
+    }
+
+    .chat {
+      max-width: 500px;
+      margin: 20px auto;
+      text-align: left;
+    }
+
+    .user {
+      background: #333;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .ai {
+      background: #1f1f1f;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      color: #ffa500;
+    }
+
+    #loading { visibility: hidden; margin-top: 10px; }
+  </style>
+</head>
+
+<body>
+
+  <img src="AI logo.png" alt="Logo AISO" class="logo">
+
+  <h2>AISO</h2>
+  <h1>What are you thinking today?</h1>
+
+  <textarea id="prompt" placeholder="Write the image prompt here..."></textarea>
+  <br>
+  <button onclick="Send()">Send</button>
+
+  <p id="loading">Thinking<span id="dots"></span></p>
+
+  <div class="chat" id="chat"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    /* 🔥🔥🔥 PEGA AQUÍ TU CONFIGURACIÓN DE FIREBASE 🔥🔥🔥 */
+    const firebaseConfig = {
+    apiKey: "AIzaSyBVTr4but9XVWs-7UzNts_Li4kSQ1wyBSI",
+     authDomain: "aiso-216e2.firebaseapp.com",
+     projectId: "aiso-216e2",
+     storageBucket: "aiso-216e2.firebasestorage.app",
+     messagingSenderId: "106641737134",
+     appId: "1:106641737134:web:74fea4bac98eec0961b43f",
+     measurementId: "G-3R6VJEZDK9"
+    };
+    /* 🔥🔥🔥 NO TOQUES NADA MÁS 🔥🔥🔥 */
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // REDIRECCIÓN SI NO HAY SESIÓN
+    onAuthStateChanged(auth, user => {
+      if (!user) {
+        window.location.href = "login.html";
+      }
+    });
+
+    let dots = 0;
+    setInterval(() => {
+      dots = (dots + 1) % 4;
+      document.getElementById("dots").textContent = ".".repeat(dots);
+    }, 500);
+
+    function Send() {
+      const text = document.getElementById("prompt").value;
+      if (text.trim() === "") return;
+
+      const chat = document.getElementById("chat");
+      chat.innerHTML += `<div class="user"><b>USER:</b> ${text}</div>`;
+
+      document.getElementById("prompt").value = "";
+      document.getElementById("loading").style.visibility = "visible";
+
+      setTimeout(() => {
+        document.getElementById("loading").style.visibility = "hidden";
+        chat.innerHTML += `<div class="ai"><b>AISO:</b> I am thinking about your idea 🤖</div>`;
+      }, 2000);
+    }
+  </script>
+
+</body>
+</html>
